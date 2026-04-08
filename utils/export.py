@@ -89,6 +89,12 @@ def export_comments_to_excel(comments):
     if df.empty:
         return _empty_bytes()
 
+    # Ensure columns exist
+    for col, default in [("source", "unknown"), ("source_url", ""), ("platform", "unknown"),
+                         ("username", ""), ("comment", ""), ("likes", 0), ("date", ""), ("is_reply", False)]:
+        if col not in df.columns:
+            df[col] = default
+
     # Sheet 1: All comments
     all_df = df.sort_values("likes", ascending=False).rename(columns={
         "source": "Source Post", "platform": "Platform", "username": "Username",
