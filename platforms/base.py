@@ -95,7 +95,10 @@ class BaseScraper(ABC):
 
     @staticmethod
     def smart_limit(date_from, date_to) -> int:
-        """Estimate posts to pull based on date range. Max ~3 posts/day + buffer."""
-        days = max((date_to - date_from).days, 1)
-        estimate = int(days * 3 * 1.2)
-        return max(30, min(estimate, 500))
+        """Estimate posts to pull. Apify pulls newest first, so we need enough
+        to reach back to date_from from today. ~2 posts/day + 30% buffer."""
+        from datetime import datetime as _dt
+        today = _dt.now()
+        days_back = max((today - date_from).days, 1)
+        estimate = int(days_back * 2 * 1.3)
+        return max(30, min(estimate, 1000))
