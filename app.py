@@ -124,15 +124,15 @@ with T_CP:
         st.session_state["cp_r"] = posts
         st.session_state["cp_e"] = errs
         st.session_state["cp_p"] = plats
-        st.session_state["cp_f"] = d_from.strftime("%Y-%m-%d")
-        st.session_state["cp_t"] = d_to.strftime("%Y-%m-%d")
+        st.session_state["cp_from_str"] = d_from.strftime("%Y-%m-%d")
+        st.session_state["cp_to_str"] = d_to.strftime("%Y-%m-%d")
         st.session_state["cp_ai"] = ai
 
     if st.session_state.get("cp_r"):
         posts = st.session_state["cp_r"]
         df = pd.DataFrame(posts)
         plats = st.session_state["cp_p"]
-        d_f, d_t = st.session_state["cp_f"], st.session_state["cp_t"]
+        d_f, d_t = st.session_state["cp_from_str"], st.session_state["cp_to_str"]
         ai = st.session_state.get("cp_ai", "")
         st.markdown("---")
         for e in st.session_state.get("cp_e", []):
