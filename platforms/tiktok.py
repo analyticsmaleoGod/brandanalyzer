@@ -13,7 +13,7 @@ class TikTokScraper(BaseScraper):
         clean_username = username.lstrip("@").strip()
         return {
             "profiles": [clean_username],
-            "resultsPerPage": 500,
+            "resultsPerPage": self.smart_limit(date_from, date_to),
             "shouldDownloadCovers": False,
             "shouldDownloadVideos": False,
         }

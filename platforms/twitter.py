@@ -13,7 +13,7 @@ class TwitterScraper(BaseScraper):
         clean_username = username.lstrip("@").strip()
         return {
             "handles": [clean_username],
-            "tweetsDesired": 500,
+            "tweetsDesired": self.smart_limit(date_from, date_to),
             "addUserInfo": True,
         }
 

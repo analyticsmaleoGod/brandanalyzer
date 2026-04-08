@@ -13,7 +13,7 @@ class InstagramScraper(BaseScraper):
         clean_username = username.lstrip("@").strip()
         return {
             "username": [clean_username],
-            "resultsLimit": 500,
+            "resultsLimit": self.smart_limit(date_from, date_to),
         }
 
     def parse_results(self, raw_items: list, date_from: datetime, date_to: datetime) -> list[dict]:

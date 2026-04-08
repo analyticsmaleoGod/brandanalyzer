@@ -18,7 +18,7 @@ class FacebookScraper(BaseScraper):
             url = clean if clean.startswith("http") else f"https://{clean}"
         return {
             "startUrls": [{"url": url}],
-            "resultsLimit": 500,
+            "resultsLimit": self.smart_limit(date_from, date_to),
         }
 
     def parse_results(self, raw_items: list, date_from: datetime, date_to: datetime) -> list[dict]:

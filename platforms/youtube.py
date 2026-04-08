@@ -17,7 +17,7 @@ class YouTubeScraper(BaseScraper):
             url = clean if clean.startswith("http") else f"https://{clean}"
         return {
             "startUrls": [{"url": url}],
-            "maxResults": 500,
+            "maxResults": self.smart_limit(date_from, date_to),
             "sortBy": "date",
         }
 
