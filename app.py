@@ -271,6 +271,9 @@ def search_tab(tab_key, search_type, label, placeholder, icon):
         with c1: dt_from = st.date_input("From", value=datetime.now()-timedelta(days=90), key=f"{tab_key}_df")
         with c2: dt_to = st.date_input("To", value=datetime.now(), key=f"{tab_key}_dt")
         mode_key = "daterange"
+        # Smart limit: pull enough to cover the date range, not a fixed 100
+        days = max((dt_to - dt_from).days, 1)
+        max_qty = max(30, min(int(days * 3 * 1.2), 500))
 
     st.markdown("")
     can = bool(api_token and queries and sel_plats)
