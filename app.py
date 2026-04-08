@@ -213,10 +213,22 @@ with T_CMT:
         if cmt:
             cdf = pd.DataFrame(cmt)
             st.markdown("---")
-            st.success(f"**{len(cdf)} comments** from {cdf['source'].nunique()} posts")
+
+            # Ensure expected columns exist with defaults
+            if "source" not in cdf.columns: cdf["source"] = "unknown"
+            if "source_url" not in cdf.columns: cdf["source_url"] = ""
+            if "platform" not in cdf.columns: cdf["platform"] = "unknown"
+            if "username" not in cdf.columns: cdf["username"] = ""
+            if "comment" not in cdf.columns: cdf["comment"] = cdf.get("text", pd.Series([""]* len(cdf)))
+            if "likes" not in cdf.columns: cdf["likes"] = 0
+            if "date" not in cdf.columns: cdf["date"] = ""
+            if "is_reply" not in cdf.columns: cdf["is_reply"] = False
+
+            n_sources = cdf["source"].nunique()
+            st.success(f"**{len(cdf)} comments** from {n_sources} posts")
             c1,c2,c3,c4 = st.columns(4)
             with c1: st.metric("Comments", f"{len(cdf):,}")
-            with c2: st.metric("Posts scraped", cdf["source"].nunique())
+            with c2: st.metric("Posts scraped", n_sources)
             with c3: st.metric("Replies", int(cdf["is_reply"].sum()))
             with c4: st.metric("Avg. likes", f"{cdf['likes'].mean():.1f}")
             st.markdown("### Comments")
