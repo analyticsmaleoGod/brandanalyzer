@@ -121,8 +121,12 @@ with T_CP:
         if claude_key and posts:
             with st.spinner("AI analyzing..."):
                 ai = generate_analysis(claude_key, posts, plats, d_from.strftime("%Y-%m-%d"), d_to.strftime("%Y-%m-%d"))
-        st.session_state.update({"cp_r": posts, "cp_e": errs, "cp_p": plats,
-            "cp_f": d_from.strftime("%Y-%m-%d"), "cp_t": d_to.strftime("%Y-%m-%d"), "cp_ai": ai})
+        st.session_state["cp_r"] = posts
+        st.session_state["cp_e"] = errs
+        st.session_state["cp_p"] = plats
+        st.session_state["cp_f"] = d_from.strftime("%Y-%m-%d")
+        st.session_state["cp_t"] = d_to.strftime("%Y-%m-%d")
+        st.session_state["cp_ai"] = ai
 
     if st.session_state.get("cp_r"):
         posts = st.session_state["cp_r"]
@@ -209,14 +213,14 @@ with T_CMT:
         if cmt:
             cdf = pd.DataFrame(cmt)
             st.markdown("---")
-            st.success(f"**{len(cdf)} comments** from {cdf['source_id'].nunique()} posts")
+            st.success(f"**{len(cdf)} comments** from {cdf['source'].nunique()} posts")
             c1,c2,c3,c4 = st.columns(4)
             with c1: st.metric("Comments", f"{len(cdf):,}")
-            with c2: st.metric("Posts scraped", cdf["source_id"].nunique())
+            with c2: st.metric("Posts scraped", cdf["source"].nunique())
             with c3: st.metric("Replies", int(cdf["is_reply"].sum()))
             with c4: st.metric("Avg. likes", f"{cdf['likes'].mean():.1f}")
             st.markdown("### Comments")
-            disp = cdf[["source_id","platform","username","comment","likes","date","is_reply"]].copy()
+            disp = cdf[["source","platform","username","comment","likes","date","is_reply"]].copy()
             disp.columns = ["Source Post","Platform","Username","Comment","Likes","Date","Reply"]
             st.dataframe(disp.sort_values("Likes",ascending=False), use_container_width=True, height=400, hide_index=True)
             st.markdown("### Download")
@@ -277,8 +281,8 @@ def search_tab(tab_key, search_type, label, placeholder, icon):
         def search_cb(msg): status.markdown(msg)
         results = search_multi(
             api_token, queries, sel_plats, search_type, mode_key, max_qty,
-            datetime(dt_from.year,dt_from.month,dt_from.day) if dt_from else None,
-            datetime(dt_to.year,dt_to.month,dt_to.day,23,59,59) if dt_to else None,
+            dt_from.strftime("%Y-%m-%d") if dt_from else None,
+            dt_to.strftime("%Y-%m-%d") if dt_to else None,
             search_cb
         )
         status.empty()
