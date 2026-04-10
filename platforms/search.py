@@ -7,10 +7,10 @@ SEARCH_ACTORS = {
     "instagram_hashtag": "apify/instagram-hashtag-scraper",
     "instagram_keyword": "apify/instagram-scraper",
     "tiktok": "clockworks/free-tiktok-scraper",
-    "x": "quacker/twitter-scraper",
+    "x": "apidojo/tweet-scraper",
     "youtube": "streamers/youtube-scraper",
     "facebook": "apify/facebook-posts-scraper",
-    "threads": "apify/threads-scraper",
+    "threads": "george.the.developer/threads-scraper",
 }
 
 
@@ -105,13 +105,18 @@ def _build_input(platform, query, search_type, limit):
         key = "hashtags" if search_type == "hashtag" else "searchQueries"
         return {key: [query], "resultsPerPage": limit}
     elif platform == "x":
-        return {"searchTerms": [q], "tweetsDesired": limit}
+        # apidojo/tweet-scraper input format
+        return {
+            "startUrls": [f"https://twitter.com/search?q={q}"],
+            "tweetsDesired": limit,
+        }
     elif platform == "youtube":
         return {"searchKeywords": [q], "maxResults": limit}
     elif platform == "facebook":
         return {"searchTerms": [q], "resultsLimit": limit}
     elif platform == "threads":
-        return {"searchTerms": [q], "resultsLimit": limit}
+        # george.the.developer/threads-scraper input format
+        return {"searchQuery": q, "maxPosts": limit}
     return {}
 
 
@@ -157,15 +162,17 @@ def _extract_fields(item, platform):
             url_keys=["webVideoUrl", "url"],
         )
     elif platform == "x":
+        # apidojo/tweet-scraper output format
         return _build_post(
             platform="X (Twitter)", item=item,
-            caption=item.get("text") or item.get("full_text") or "",
-            likes_keys=["likeCount", "likes", "favorite_count"],
+            caption=item.get("text") or item.get("full_text") or item.get("tweet") or "",
+            likes_keys=["likeCount", "likes", "favorite_count", "favoriteCount"],
             comment_keys=["replyCount", "replies", "reply_count"],
-            share_keys=["retweetCount", "retweets"], view_keys=["viewCount", "views"],
-            user_keys=["author.userName", "username"],
-            date_keys=["createdAt", "created_at", "date"],
-            url_keys=["url", "tweetUrl"],
+            share_keys=["retweetCount", "retweets", "retweet_count"],
+            view_keys=["viewCount", "views"],
+            user_keys=["author.userName", "author.name", "username", "user.screen_name"],
+            date_keys=["createdAt", "created_at", "date", "timestamp"],
+            url_keys=["url", "tweetUrl", "twitterUrl"],
         )
     elif platform == "youtube":
         return _build_post(
@@ -188,14 +195,17 @@ def _extract_fields(item, platform):
             url_keys=["url", "postUrl"],
         )
     elif platform == "threads":
+        # george.the.developer/threads-scraper output format
         return _build_post(
             platform="Threads", item=item,
-            caption=item.get("text") or item.get("caption") or "",
-            likes_keys=["likesCount", "likes"], comment_keys=["repliesCount", "comments"],
-            share_keys=["repostsCount", "shares"], view_keys=["viewsCount", "views"],
-            user_keys=["ownerUsername", "username", "author"],
-            date_keys=["timestamp", "date", "postedAt"],
-            url_keys=["url", "postUrl"],
+            caption=item.get("postText") or item.get("text") or item.get("caption") or "",
+            likes_keys=["likeCount", "likesCount", "likes"],
+            comment_keys=["replyCount", "repliesCount", "comments"],
+            share_keys=["repostCount", "repostsCount", "shares"],
+            view_keys=["viewCount", "viewsCount", "views"],
+            user_keys=["username", "ownerUsername", "author", "displayName"],
+            date_keys=["postedAt", "timestamp", "date", "scrapedAt"],
+            url_keys=["postUrl", "url"],
         )
     return None
 
