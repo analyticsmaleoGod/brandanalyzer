@@ -6,11 +6,11 @@ load_dotenv()
 ACTOR_IDS = {
     "instagram": "apify/instagram-post-scraper",
     "tiktok": "clockworks/free-tiktok-scraper",
-    "x": "quacker/twitter-scraper",
+    "x": "apidojo/tweet-scraper",
     "facebook": "apify/facebook-posts-scraper",
     "youtube": "streamers/youtube-scraper",
     "linkedin": "anchor/linkedin-company-scraper",
-    "threads": "apify/threads-scraper",
+    "threads": "george.the.developer/threads-scraper",
 }
 
 PLATFORMS = {
@@ -22,7 +22,6 @@ PLATFORMS = {
     "linkedin": {"label": "LinkedIn", "icon": "💼", "hint": "Company name or URL", "color": "#0A66C2"},
 }
 
-# Platforms available for keyword/hashtag search
 SEARCH_PLATFORMS = {
     "instagram": {"label": "Instagram", "icon": "📸"},
     "tiktok": {"label": "TikTok", "icon": "🎵"},
@@ -31,9 +30,19 @@ SEARCH_PLATFORMS = {
     "youtube": {"label": "YouTube", "icon": "▶️"},
 }
 
-# Platforms supported for comment scraping (auto-detected from URL)
-COMMENT_PLATFORMS = ["instagram", "tiktok"]
+COMMENT_PLATFORMS = {
+    "instagram.com": "instagram",
+    "tiktok.com": "tiktok",
+}
 
 
 def get_apify_token():
+    """Get token from: Streamlit Cloud secrets → .env → None"""
+    try:
+        import streamlit as st
+        token = st.secrets.get("APIFY_API_TOKEN", "")
+        if token:
+            return token.strip()
+    except Exception:
+        pass
     return os.getenv("APIFY_API_TOKEN", "").strip() or None
