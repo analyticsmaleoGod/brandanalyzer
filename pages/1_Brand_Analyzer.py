@@ -19,7 +19,7 @@ st.markdown("""
 
 # ─── Auth guard: redirect to login if not authenticated ───
 if not st.session_state.get("authenticated", False):
-    st.switch_page("Home.py")
+    st.switch_page("app.py")
 
 from config import PLATFORMS, SEARCH_PLATFORMS
 from platforms import SCRAPERS
@@ -50,7 +50,7 @@ div[data-testid="stMetric"]{background:#f8f9fa;padding:16px;border-radius:10px}
 # ─── Sidebar ───
 with st.sidebar:
     if st.button("← Back to Hub", use_container_width=True):
-        st.switch_page("Home.py")
+        st.switch_page("app.py")
     st.markdown("---")
     st.markdown("## Brand Analyzer")
     st.caption(f"Logged in as: {st.session_state.get('user_email', '')}")
@@ -58,7 +58,7 @@ with st.sidebar:
     if st.button("Logout", use_container_width=True, key="ba_logout"):
         st.session_state["authenticated"] = False
         st.session_state["user_email"] = ""
-        st.switch_page("Home.py")
+        st.switch_page("app.py")
     st.markdown("---")
     st.caption("v2.0")
 
