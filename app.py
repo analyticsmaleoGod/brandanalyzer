@@ -86,6 +86,19 @@ st.markdown("""
 .card-feature { font-size: 12px; color: #9ca3af; margin-bottom: 5px; line-height: 1.5; }
 .badge-live    { display:inline-block; background:#052e16; color:#4ade80; border:1px solid #166534; padding:3px 12px; border-radius:20px; font-size:10px; font-weight:700; margin-bottom:14px; }
 .badge-preview { display:inline-block; background:#1c1405; color:#fbbf24; border:1px solid #92400e; padding:3px 12px; border-radius:20px; font-size:10px; font-weight:700; margin-bottom:14px; }
+
+/* Hide the Streamlit button text, keep it as invisible click overlay */
+div[data-testid="stButton"] > button {
+    position: absolute !important;
+    top: 0 !important; left: 0 !important;
+    width: 100% !important; height: 100% !important;
+    opacity: 0 !important;
+    cursor: pointer !important;
+    z-index: 10 !important;
+}
+div[data-testid="stButton"] {
+    position: relative !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -97,7 +110,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown("<p style='font-size:32px;font-weight:800;color:#fff;margin:0;line-height:1.2;'>AI-Powered</p>", unsafe_allow_html=True)
+st.markdown("<p style='font-size:32px;font-weight:800;color:#111827;margin:0;line-height:1.2;'>AI-Powered</p>", unsafe_allow_html=True)
 st.markdown("<p style='font-size:32px;font-weight:800;color:#3B82F6;margin:0 0 10px;line-height:1.2;'>Marketing Intelligence</p>", unsafe_allow_html=True)
 st.markdown("<p style='color:#6b7280;font-size:15px;margin-bottom:32px;'>Two tools, one workflow — from data to pitch deck.</p>", unsafe_allow_html=True)
 
@@ -125,10 +138,11 @@ with col1:
       <div class="card-feature">✦ Comment Scraper — multi-URL, auto-detect platform</div>
       <div class="card-feature">✦ Keyword & Hashtag Tracker</div>
       <div class="card-feature">✦ AI Analysis + Excel/CSV export</div>
+      <div style="margin-top:20px;background:#1d4ed8;color:#fff;text-align:center;padding:10px;border-radius:8px;font-size:13px;font-weight:600;">Open Brand Analyzer →</div>
     </div>
     """, unsafe_allow_html=True)
     st.markdown("")
-    if st.button("Open Brand Analyzer →", use_container_width=True, type="primary", key="btn_ba"):
+    if st.button("Open Brand Analyzer", use_container_width=True, type="primary", key="btn_ba"):
         st.switch_page("pages/1_Brand_Analyzer.py")
 
 with col2:
@@ -142,10 +156,11 @@ with col2:
       <div class="card-feature">✦ SC Approval checkpoints at each phase</div>
       <div class="card-feature">✦ frndOS AI assistant — live chat per phase</div>
       <div class="card-feature">✦ Output to Lark Docs + Canva deck</div>
+      <div style="margin-top:20px;background:#7c3aed;color:#fff;text-align:center;padding:10px;border-radius:8px;font-size:13px;font-weight:600;">Open Pitch Express →</div>
     </div>
     """, unsafe_allow_html=True)
     st.markdown("")
-    if st.button("Open Pitch Express →", use_container_width=True, key="btn_pitch"):
+    if st.button("Open Pitch Express", use_container_width=True, key="btn_pitch"):
         st.switch_page("pages/2_Campaign_Pitch_Express.py")
 
 st.markdown("---")
