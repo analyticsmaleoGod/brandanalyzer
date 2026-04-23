@@ -2,6 +2,21 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
 
+st.set_page_config(
+    page_title="Brand Analyzer — frndOS",
+    page_icon="📊",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
+# ── Hide Streamlit multipage nav (top of sidebar) ─────────────────
+st.markdown("""
+<style>
+[data-testid="stSidebarNav"]     { display: none !important; }
+[data-testid="collapsedControl"] { display: none !important; }
+</style>
+""", unsafe_allow_html=True)
+
 # ─── Auth guard: redirect to login if not authenticated ───
 if not st.session_state.get("authenticated", False):
     st.switch_page("Home.py")
