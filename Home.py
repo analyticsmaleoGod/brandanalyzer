@@ -62,6 +62,13 @@ if not check_auth():
     login_page()
     st.stop()
 
+# ─── Force sidebar collapsed & expand to full width on landing ───
+st.markdown("""
+<style>
+[data-testid="collapsedControl"] { display: none !important; }
+</style>
+""", unsafe_allow_html=True)
+
 
 # ═══════════════════════════════════════════════════════════════
 # LANDING PAGE (only shows after login)
