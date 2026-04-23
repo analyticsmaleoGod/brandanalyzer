@@ -10,7 +10,7 @@ st.set_page_config(
 
 # ── Auth guard ───────────────────────────────────────────────────
 if not st.session_state.get("authenticated", False):
-    st.switch_page("Home.py")
+    st.switch_page("app.py")
 
 # ── Hide Streamlit multipage nav ─────────────────────────────────
 st.markdown("""
@@ -412,7 +412,7 @@ with st.sidebar:
 
     st.markdown("---")
     if st.button("← Back to Hub", use_container_width=True):
-        st.switch_page("Home.py")
+        st.switch_page("app.py")
 
 
 # ─────────────────────────────────────────────
