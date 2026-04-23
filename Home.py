@@ -7,11 +7,13 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# ── Hide sidebar completely ───────────────────────────────────────
+# ── Hide sidebar + Streamlit multipage nav completely ─────────────
 st.markdown("""
 <style>
-[data-testid="collapsedControl"] { display: none !important; }
-[data-testid="stSidebar"]        { display: none !important; }
+[data-testid="collapsedControl"]          { display: none !important; }
+[data-testid="stSidebar"]                 { display: none !important; }
+[data-testid="stSidebarNav"]              { display: none !important; }
+section[data-testid="stSidebarContent"]   { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -86,11 +88,6 @@ st.markdown("""
     padding: 28px 28px 24px;
     height: 100%;
 }
-.card-icon-wrap {
-    width: 52px; height: 52px; border-radius: 14px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px; margin-bottom: 16px;
-}
 .card-eyebrow {
     font-size: 10px; font-weight: 700; letter-spacing: 1.8px;
     text-transform: uppercase; margin-bottom: 6px;
@@ -144,8 +141,7 @@ col1, col2 = st.columns(2, gap="medium")
 with col1:
     st.markdown("""
     <div class="tool-card">
-      <div class="card-icon-wrap" style="background:#0d1b3e;">📊</div>
-      <div class="card-eyebrow" style="color:#3B82F6;">Data Intelligence</div>
+      <div class="card-eyebrow" style="color:#3B82F6;">📊 Data Intelligence</div>
       <div class="card-title">Brand Analyzer</div>
       <div class="badge-live">● Live Tool</div>
       <div class="card-desc">Pull social media performance data across 6 platforms in one click. Powered by Apify + Claude AI analysis.</div>
@@ -162,8 +158,7 @@ with col1:
 with col2:
     st.markdown("""
     <div class="tool-card">
-      <div class="card-icon-wrap" style="background:#1e0a3e;">🚀</div>
-      <div class="card-eyebrow" style="color:#8B5CF6;">Pitch Automation</div>
+      <div class="card-eyebrow" style="color:#8B5CF6;">🚀 Pitch Automation</div>
       <div class="card-title">Campaign Pitch AI Express</div>
       <div class="badge-preview">◎ Preview · Demo Mode</div>
       <div class="card-desc">End-to-end AI-powered pitching system. From client brief to full pitch deck in under 2 hours, operated by 2 people.</div>
