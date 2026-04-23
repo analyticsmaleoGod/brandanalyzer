@@ -10,10 +10,9 @@ st.set_page_config(
 # ── Hide sidebar + Streamlit multipage nav completely ─────────────
 st.markdown("""
 <style>
-[data-testid="collapsedControl"]          { display: none !important; }
-[data-testid="stSidebar"]                 { display: none !important; }
-[data-testid="stSidebarNav"]              { display: none !important; }
-section[data-testid="stSidebarContent"]   { display: none !important; }
+[data-testid="collapsedControl"] { display: none !important; }
+[data-testid="stSidebar"]        { display: none !important; }
+[data-testid="stSidebarNav"]     { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -27,9 +26,7 @@ def check_auth():
 
 def login_page():
     st.markdown("""
-    <style>
-    .block-container { max-width: 440px; padding-top: 10vh; }
-    </style>
+    <style>.block-container { max-width: 440px; padding-top: 10vh; }</style>
     """, unsafe_allow_html=True)
 
     st.markdown("""
@@ -56,7 +53,6 @@ def login_page():
         except Exception:
             st.error("App not configured. Contact admin.")
             return
-
         email_clean = email.strip().lower()
         if email_clean not in [e.lower() for e in allowed]:
             st.error("Email not authorized. Contact admin for access.")
@@ -75,42 +71,24 @@ if not check_auth():
 
 
 # ═══════════════════════════════════════════════════════════════
-# LANDING PAGE — shown after login
+# LANDING PAGE — after login
 # ═══════════════════════════════════════════════════════════════
 st.markdown("""
 <style>
 .block-container { max-width: 820px; padding-top: 3rem; }
-
 .tool-card {
-    background: #0E0E1C;
-    border: 1px solid #1E1E32;
-    border-radius: 16px;
-    padding: 28px 28px 24px;
-    height: 100%;
+    background: #0E0E1C; border: 1px solid #1E1E32;
+    border-radius: 16px; padding: 28px 28px 24px; height: 100%;
 }
-.card-eyebrow {
-    font-size: 10px; font-weight: 700; letter-spacing: 1.8px;
-    text-transform: uppercase; margin-bottom: 6px;
-}
-.card-title { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 10px; }
-.card-desc  { font-size: 13px; color: #6b7280; line-height: 1.65; margin-bottom: 16px; }
+.card-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; margin-bottom: 6px; }
+.card-title   { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+.card-desc    { font-size: 13px; color: #6b7280; line-height: 1.65; margin-bottom: 16px; }
 .card-feature { font-size: 12px; color: #9ca3af; margin-bottom: 5px; line-height: 1.5; }
-.badge-live {
-    display:inline-block;
-    background:#052e16; color:#4ade80; border:1px solid #166534;
-    padding:3px 12px; border-radius:20px; font-size:10px; font-weight:700;
-    margin-bottom:14px;
-}
-.badge-preview {
-    display:inline-block;
-    background:#1c1405; color:#fbbf24; border:1px solid #92400e;
-    padding:3px 12px; border-radius:20px; font-size:10px; font-weight:700;
-    margin-bottom:14px;
-}
+.badge-live    { display:inline-block; background:#052e16; color:#4ade80; border:1px solid #166534; padding:3px 12px; border-radius:20px; font-size:10px; font-weight:700; margin-bottom:14px; }
+.badge-preview { display:inline-block; background:#1c1405; color:#fbbf24; border:1px solid #92400e; padding:3px 12px; border-radius:20px; font-size:10px; font-weight:700; margin-bottom:14px; }
 </style>
 """, unsafe_allow_html=True)
 
-# ── Header ────────────────────────────────────────────────────────
 st.markdown("""
 <div style="display:inline-flex;align-items:center;gap:8px;background:#161625;border:1px solid #1E1E32;
             padding:5px 14px;border-radius:20px;font-size:12px;color:#6b7280;margin-bottom:28px;">
@@ -123,7 +101,6 @@ st.markdown("<p style='font-size:32px;font-weight:800;color:#fff;margin:0;line-h
 st.markdown("<p style='font-size:32px;font-weight:800;color:#3B82F6;margin:0 0 10px;line-height:1.2;'>Marketing Intelligence</p>", unsafe_allow_html=True)
 st.markdown("<p style='color:#6b7280;font-size:15px;margin-bottom:32px;'>Two tools, one workflow — from data to pitch deck.</p>", unsafe_allow_html=True)
 
-# ── Logged in bar ────────────────────────────────────────────────
 col_info, col_logout = st.columns([4, 1])
 with col_info:
     st.caption(f"Logged in as: **{st.session_state.get('user_email', '')}**")
@@ -135,7 +112,6 @@ with col_logout:
 
 st.markdown("---")
 
-# ── Tool Cards ────────────────────────────────────────────────────
 col1, col2 = st.columns(2, gap="medium")
 
 with col1:
@@ -173,5 +149,4 @@ with col2:
         st.switch_page("pages/2_Campaign_Pitch_Express.py")
 
 st.markdown("---")
-st.markdown("<p style='text-align:center;color:#374151;font-size:12px;'>Maleo FCN · frndOS · Internal use only · Built April 2026</p>",
-            unsafe_allow_html=True)
+st.markdown("<p style='text-align:center;color:#374151;font-size:12px;'>Maleo FCN · frndOS · Internal use only · Built April 2026</p>", unsafe_allow_html=True)
