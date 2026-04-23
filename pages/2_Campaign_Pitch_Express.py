@@ -12,13 +12,13 @@ st.set_page_config(
 if not st.session_state.get("authenticated", False):
     st.switch_page("Home.py")
 
-# ── Minimal CSS — only for things Streamlit can't do natively ────
+# ── Hide Streamlit multipage nav ─────────────────────────────────
 st.markdown("""
 <style>
-/* Hide default sidebar toggle arrow — we use our own nav */
+[data-testid="stSidebarNav"]     { display: none !important; }
 [data-testid="collapsedControl"] { display: none !important; }
 
-/* Pipeline strip pill */
+/* Pipeline strip pills */
 .pipe-pill {
     display: inline-block;
     padding: 4px 12px;
@@ -33,11 +33,9 @@ st.markdown("""
 .pipe-active  { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
 .pipe-pending { background: #f9fafb; color: #9ca3af; border-color: #e5e7eb; }
 
-/* Output block title */
 .out-title { font-size: 18px; font-weight: 700; margin-bottom: 2px; }
 .out-sub   { font-size: 13px; color: #6b7280; margin-bottom: 16px; }
 
-/* Lark sync badge */
 .lark-badge {
     display: inline-flex; align-items: center; gap: 6px;
     background: #f0fdf4; border: 1px solid #86efac;
@@ -45,9 +43,6 @@ st.markdown("""
     font-size: 13px; color: #166534; font-weight: 600;
     margin-top: 12px; margin-bottom: 4px;
 }
-
-/* Chat bubble override for readability */
-.chat-wrap { max-height: 340px; overflow-y: auto; padding: 4px 0; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -80,7 +75,7 @@ PHASES = [
                 ("Product",            "Lumia Hydra-Glow Serum — new product launch"),
                 ("Campaign Period",    "July – September 2026 (12 weeks)"),
                 ("Business Objective", "Drive awareness and first-trial among millennial women in urban Indonesia"),
-                ("Target Audience",    "Primary: Women 22–32, urban, skincare-aware\nSecondary: Beginners seeking entry product"),
+                ("Target Audience",    "Primary: Women 22–32, urban, skincare-aware. Secondary: Beginners seeking entry product"),
                 ("Platforms",         "Instagram, TikTok"),
                 ("Budget",            "Rp 300,000,000"),
                 ("Objective Type",    "Awareness (Primary) + Consideration (Secondary)"),
@@ -326,13 +321,11 @@ def render_output(phase):
             with cols[i]:
                 st.metric(label=name, value=pct)
                 st.caption(desc)
-
         st.markdown("**Platform Strategy**")
         for name, formats in out["platforms"]:
             with st.container(border=True):
                 st.markdown(f"**{name}**")
                 st.write(formats)
-
         st.markdown("**12-Week Timeline**")
         df_tl = pd.DataFrame(out["timeline"], columns=["Weeks", "Phase", "Description"])
         st.dataframe(df_tl, use_container_width=True, hide_index=True)
@@ -355,56 +348,17 @@ def render_output(phase):
 
 
 # ─────────────────────────────────────────────
-# SIDEBAR — Navigation
+# SIDEBAR — Chat FIRST, then nav
 # ─────────────────────────────────────────────
 with st.sidebar:
 
-    if st.button("← Back to Hub", use_container_width=True):
-        st.switch_page("Home.py")
+    # ── frndOS Assistant — TOP of sidebar ────────────────────────
+    st.markdown("### 🟢 frndOS assistant")
+    st.caption(f"AI · Demo · Phase: **{PHASES[st.session_state.pitch_phase]['name']}**")
 
-    st.markdown("---")
-
-    # Session header
-    st.markdown(f"#### 🚀 Pitch Session")
-    st.markdown(f"**{CLIENT}**")
-    st.caption(CAMPAIGN)
-    st.markdown(f"SC: **{SC}** &nbsp;·&nbsp; CE: **{CE}**")
-
-    st.markdown("---")
-
-    # Phase navigation
-    st.markdown("**PHASES**")
-    for i, p in enumerate(PHASES):
-        s      = st.session_state.pitch_statuses[i]
-        is_sel = st.session_state.pitch_phase == i
-        icon   = "✅" if s == "done" else ("▶️" if s == "active" else "🔒")
-        label  = f"{icon} {p['name']}"
-        if st.button(label, key=f"nav_{i}", use_container_width=True,
-                     type="primary" if is_sel else "secondary",
-                     disabled=(s == "pending")):
-            st.session_state.pitch_phase = i
-            st.rerun()
-
-    st.markdown("---")
-
-    # Output links
-    st.markdown("**OUTPUT**")
-    any_done  = any(s == "done" for s in st.session_state.pitch_statuses)
-    deck_done = st.session_state.pitch_statuses[-1] == "done"
-    lark_icon  = "✅" if any_done  else "○"
-    canva_icon = "✅" if deck_done else "○"
-    st.markdown(f"{lark_icon} Lark Docs")
-    st.markdown(f"{canva_icon} Canva Deck")
-
-    st.markdown("---")
-
-    # ── frndOS Assistant Chat ────────────────────
-    st.markdown("#### 🟢 frndOS assistant")
-    st.caption("AI · Demo mode")
-
-    chat_box = st.container(height=260)
+    chat_box = st.container(height=220)
     with chat_box:
-        for role, text in st.session_state.pitch_chat[-14:]:
+        for role, text in st.session_state.pitch_chat[-12:]:
             with st.chat_message("assistant" if role == "ai" else "user"):
                 st.write(text)
 
@@ -425,6 +379,41 @@ with st.sidebar:
         st.session_state.pitch_chat.append(("ai", bot_reply))
         st.rerun()
 
+    st.markdown("---")
+
+    # ── Session info ──────────────────────────────────────────────
+    st.markdown(f"**{CLIENT}**")
+    st.caption(CAMPAIGN)
+    st.markdown(f"SC: **{SC}** &nbsp;·&nbsp; CE: **{CE}**")
+
+    st.markdown("---")
+
+    # ── Phase navigation ─────────────────────────────────────────
+    st.markdown("**PHASES**")
+    for i, p in enumerate(PHASES):
+        s      = st.session_state.pitch_statuses[i]
+        is_sel = st.session_state.pitch_phase == i
+        icon   = "✅" if s == "done" else ("▶️" if s == "active" else "🔒")
+        label  = f"{icon} {p['name']}"
+        if st.button(label, key=f"nav_{i}", use_container_width=True,
+                     type="primary" if is_sel else "secondary",
+                     disabled=(s == "pending")):
+            st.session_state.pitch_phase = i
+            st.rerun()
+
+    st.markdown("---")
+
+    # ── Output links ──────────────────────────────────────────────
+    st.markdown("**OUTPUT**")
+    any_done  = any(s == "done" for s in st.session_state.pitch_statuses)
+    deck_done = st.session_state.pitch_statuses[-1] == "done"
+    st.markdown(f"{'✅' if any_done  else '○'} Lark Docs")
+    st.markdown(f"{'✅' if deck_done else '○'} Canva Deck")
+
+    st.markdown("---")
+    if st.button("← Back to Hub", use_container_width=True):
+        st.switch_page("Home.py")
+
 
 # ─────────────────────────────────────────────
 # MAIN CONTENT
@@ -433,7 +422,7 @@ idx   = st.session_state.pitch_phase
 phase = PHASES[idx]
 s     = st.session_state.pitch_statuses[idx]
 
-# ── Top: Pipeline progress strip ─────────────
+# ── Pipeline strip ────────────────────────────
 done_ct = sum(1 for x in st.session_state.pitch_statuses if x == "done")
 total   = len(PHASES)
 
@@ -441,7 +430,7 @@ st.markdown(f"### 🚀 Campaign Pitch AI Express &nbsp; `{done_ct}/{total} phase
 
 strip_html = ""
 for i, p in enumerate(PHASES):
-    ps = st.session_state.pitch_statuses[i]
+    ps   = st.session_state.pitch_statuses[i]
     icon = "✓ " if ps == "done" else ("▶ " if ps == "active" else "")
     css  = {"done": "pipe-done", "active": "pipe-active", "pending": "pipe-pending"}[ps]
     strip_html += f'<span class="pipe-pill {css}">{icon}{p["name"]}</span>'
@@ -450,25 +439,18 @@ st.markdown(strip_html, unsafe_allow_html=True)
 st.markdown("---")
 
 # ── Phase header ──────────────────────────────
-badge_map = {
-    "active":  ("Active",  "🔵"),
-    "done":    ("Done ✓",  "✅"),
-    "pending": ("Locked",  "🔒"),
-}
-badge_label, badge_icon = badge_map[s]
-
 col_title, col_badge = st.columns([5, 1])
 with col_title:
     st.markdown(f"## {phase['icon']} {phase['name']}")
     st.caption(phase["desc"])
 with col_badge:
-    st.markdown(f"<br>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
     if s == "active":
-        st.info(badge_label)
+        st.info("Active")
     elif s == "done":
-        st.success(badge_label)
+        st.success("Done ✓")
     else:
-        st.warning(badge_label)
+        st.warning("Locked")
 
 # ── Locked ────────────────────────────────────
 if s == "pending":
@@ -484,7 +466,7 @@ if st.session_state.pitch_outputs.get(idx):
     # Approval panel
     if st.session_state.pitch_approval.get(idx):
         st.markdown("---")
-        st.markdown("### SC Approval Checklist")
+        st.markdown("### ✅ SC Approval Checklist")
 
         checklist_items = CHECKLISTS.get(phase["id"], [])
         checks = st.session_state.pitch_checklist.get(idx, {})
@@ -533,11 +515,11 @@ if st.session_state.pitch_outputs.get(idx):
         st.markdown('<div class="lark-badge">✅ Approved by SC — Output synced to Lark Docs</div>', unsafe_allow_html=True)
 
 else:
-    # ── Run button (phase not yet executed) ───
+    # ── Run button ────────────────────────────
     st.markdown("")
-    st.markdown(f"**Ready to run this phase?** Click the button below to generate the output.")
+    st.markdown(f"**Ready to run this phase?**")
     st.markdown("")
-    if st.button(phase["btn"], type="primary", key=f"run_{idx}", use_container_width=False):
+    if st.button(phase["btn"], type="primary", key=f"run_{idx}"):
         for role, text in phase["chat"]:
             st.session_state.pitch_chat.append((role, text))
         st.session_state.pitch_outputs[idx]  = True
