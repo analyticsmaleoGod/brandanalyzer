@@ -10,15 +10,15 @@ class TwitterScraper(BaseScraper):
         return ACTOR_IDS["x"]
 
     def build_input(self, username, date_from, date_to):
-        clean = username.lstrip("@").strip()
-        return {
-            "twitterHandles": [clean],
-            "startDate": date_from.strftime("%Y-%m-%d"),
-            "endDate": date_to.strftime("%Y-%m-%d"),
-            "maxItems": max(50, self.smart_limit(date_from, date_to)),
-            "includeNativeRetweets": False,
-            "includeTweetReplies": False,
-        }
+    clean = username.lstrip("@").strip()
+    return {
+        "twitterHandles": [clean],
+        "start": date_from.strftime("%Y-%m-%d"),
+        "end": date_to.strftime("%Y-%m-%d"),
+        "maxItems": max(50, self.smart_limit(date_from, date_to)),
+        "sort": "Latest",
+        "includeSearchTerms": False,
+    }
 
     def parse_results(self, raw_items, date_from, date_to):
         posts = []
