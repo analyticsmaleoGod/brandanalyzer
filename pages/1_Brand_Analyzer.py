@@ -143,14 +143,12 @@ with T_CP:
         st.session_state["cp_from_str"] = d_from.strftime("%Y-%m-%d")
         st.session_state["cp_to_str"] = d_to.strftime("%Y-%m-%d")
         st.session_state["cp_ai"] = ai
-    # Use "in" check — not get() — so empty list [] still triggers the block
     if "cp_r" in st.session_state:
         posts = st.session_state["cp_r"]; df = pd.DataFrame(posts)
         plats = st.session_state["cp_p"]
         d_f, d_t = st.session_state["cp_from_str"], st.session_state["cp_to_str"]
         ai = st.session_state.get("cp_ai", "")
         st.markdown("---")
-        # Always show errors — even when posts list is empty
         for e in st.session_state.get("cp_e", []):
             msg = str(e).lower()
             if any(x in msg for x in ["quota", "credit", "limit exceeded", "insufficient", "payment", "billing"]):
@@ -185,29 +183,6 @@ with T_CP:
             c1,c2,_ = st.columns([1,1,2])
             with c1: st.download_button("📥 .xlsx", export_to_excel(posts,plats,d_f,d_t,ai), f"content_{d_f}_{d_t}.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True, key="cp_dx")
             with c2: st.download_button("📥 .csv", export_to_csv(posts), f"content_{d_f}_{d_t}.csv", "text/csv", use_container_width=True, key="cp_dc")
-        with c1: st.metric("Total", f"{len(df):,}")
-        with c2: st.metric("Avg. ER", f"{df['engagement_rate'].mean():.2f}%" if len(df) else "0%")
-        with c3: st.metric("Interactions", fmt_num(int(df[["likes","comments","shares"]].sum().sum())))
-        with c4:
-            try:
-                wk = max((datetime.strptime(d_t,"%Y-%m-%d")-datetime.strptime(d_f,"%Y-%m-%d")).days/7,1)
-                st.metric("Freq.", f"{len(df)/wk:.1f}x/wk")
-            except: st.metric("Freq.", "—")
-        st.markdown("### Per platform")
-        for i, p in enumerate(plats):
-            if i%3==0: cols = st.columns(min(len(plats)-i,3))
-            with cols[i%3]:
-                pdf = df[df["platform"]==p]
-                st.markdown(f"**{p}** — {len(pdf)} posts — {pdf['engagement_rate'].mean():.1f}% ER")
-        if ai: st.markdown("### 🤖 AI Analysis"); st.markdown(ai)
-        st.markdown("### All posts")
-        disp = df[["platform","date","type","caption","likes","comments","shares","views","engagement_rate"]].copy()
-        disp.columns = ["Platform","Date","Type","Caption","Likes","Comments","Shares","Views","ER (%)"]
-        st.dataframe(disp.sort_values("Date",ascending=False), use_container_width=True, height=400, hide_index=True)
-        st.markdown("### Download")
-        c1,c2,_ = st.columns([1,1,2])
-        with c1: st.download_button("📥 .xlsx", export_to_excel(posts,plats,d_f,d_t,ai), f"content_{d_f}_{d_t}.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True, key="cp_dx")
-        with c2: st.download_button("📥 .csv", export_to_csv(posts), f"content_{d_f}_{d_t}.csv", "text/csv", use_container_width=True, key="cp_dc")
 
 
 # ═══ TAB 2: FOLLOWER GROWTH ═══
