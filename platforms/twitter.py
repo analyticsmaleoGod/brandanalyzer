@@ -23,10 +23,12 @@ class TwitterScraper(BaseScraper):
     def parse_results(self, raw_items, date_from, date_to):
         posts = []
         for item in raw_items:
-            post_date = self.safe_date(
-                item.get("createdAt") or item.get("created_at")
-                or item.get("date") or item.get("timestamp")
-            )
+            raw_date = item.get("createdAt") or item.get("created_at") or item.get("date") or item.get("timestamp")
+            try:
+                from email.utils import parsedate_to_datetime
+                post_date = parsedate_to_datetime(raw_date).replace(tzinfo=None) if raw_date else None
+            except Exception:
+                post_date = self.safe_date(raw_date)
             if not post_date or not (date_from <= post_date <= date_to):
                 continue
 
