@@ -65,14 +65,22 @@ class BaseScraper(ABC):
 
     @staticmethod
     def safe_date(value) -> Optional[datetime]:
-        """Try to parse various date formats."""
+        """Try to parse various date formats including UNIX timestamps."""
         if value is None:
             return None
         if isinstance(value, datetime):
-            return value
+            # Strip timezone info so comparisons with naive datetimes don't crash
+            return value.replace(tzinfo=None)
+        # Handle UNIX timestamps (int/float) — Apify sometimes returns these
+        if isinstance(value, (int, float)):
+            try:
+                return datetime.utcfromtimestamp(value)
+            except (ValueError, OSError, OverflowError):
+                return None
         formats = [
             "%Y-%m-%dT%H:%M:%S.%fZ",
             "%Y-%m-%dT%H:%M:%SZ",
+            "%Y-%m-%dT%H:%M:%S+00:00",
             "%Y-%m-%dT%H:%M:%S",
             "%Y-%m-%d %H:%M:%S",
             "%Y-%m-%d",
@@ -82,6 +90,12 @@ class BaseScraper(ABC):
                 return datetime.strptime(str(value), fmt)
             except ValueError:
                 continue
+        # Last resort: try dateutil if available
+        try:
+            from dateutil import parser as _dp
+            return _dp.parse(str(value)).replace(tzinfo=None)
+        except Exception:
+            pass
         return None
 
     @staticmethod
