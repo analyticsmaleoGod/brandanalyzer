@@ -143,14 +143,19 @@ with T_CP:
         st.session_state["cp_from_str"] = d_from.strftime("%Y-%m-%d")
         st.session_state["cp_to_str"] = d_to.strftime("%Y-%m-%d")
         st.session_state["cp_ai"] = ai
-    if st.session_state.get("cp_r"):
+    # Use "in" check — not get() — so empty list [] still triggers the block
+    if "cp_r" in st.session_state:
         posts = st.session_state["cp_r"]; df = pd.DataFrame(posts)
         plats = st.session_state["cp_p"]
         d_f, d_t = st.session_state["cp_from_str"], st.session_state["cp_to_str"]
         ai = st.session_state.get("cp_ai", "")
         st.markdown("---")
-        for e in st.session_state.get("cp_e",[]): st.warning(f"⚠️ {e}")
-        st.success(f"✅ **{len(df)} posts** across {len(plats)} platforms")
+        # Always show errors — even when posts list is empty
+        for e in st.session_state.get("cp_e", []): st.warning(f"⚠️ {e}")
+        if not posts:
+            st.warning("⚠️ No posts found in this date range. Try widening the date range or check the username.")
+        else:
+            st.success(f"✅ **{len(df)} posts** across {len(plats)} platforms")
         c1,c2,c3,c4 = st.columns(4)
         with c1: st.metric("Total", f"{len(df):,}")
         with c2: st.metric("Avg. ER", f"{df['engagement_rate'].mean():.2f}%" if len(df) else "0%")
@@ -208,7 +213,7 @@ with T_CMT:
         comments = scrape_comments_multi(api_token, parsed, cmt_cb)
         status.empty()
         st.session_state["cmt_r"] = comments
-    if st.session_state.get("cmt_r"):
+    if "cmt_r" in st.session_state:
         cmt = st.session_state["cmt_r"]
         if cmt:
             cdf = pd.DataFrame(cmt); st.markdown("---")
@@ -272,7 +277,7 @@ def search_tab(tab_key, search_type, label, placeholder, icon):
             dt_from.strftime("%Y-%m-%d") if dt_from else None, dt_to.strftime("%Y-%m-%d") if dt_to else None, search_cb)
         status.empty()
         st.session_state[f"{tab_key}_r"] = results; st.session_state[f"{tab_key}_q"] = queries
-    if st.session_state.get(f"{tab_key}_r"):
+    if f"{tab_key}_r" in st.session_state:
         results = st.session_state[f"{tab_key}_r"]; queries_used = st.session_state.get(f"{tab_key}_q", [])
         if results:
             rdf = pd.DataFrame(results); st.markdown("---")
