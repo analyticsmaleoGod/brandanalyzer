@@ -12,9 +12,12 @@ class TwitterScraper(BaseScraper):
     def build_input(self, username, date_from, date_to):
         clean = username.lstrip("@").strip()
         return {
-            "startUrls": [f"https://x.com/{clean}"],
+            "twitterHandles": [clean],
+            "startDate": date_from.strftime("%Y-%m-%d"),
+            "endDate": date_to.strftime("%Y-%m-%d"),
             "maxItems": max(50, self.smart_limit(date_from, date_to)),
-            "sort": "Latest",
+            "includeNativeRetweets": False,
+            "includeTweetReplies": False,
         }
 
     def parse_results(self, raw_items, date_from, date_to):
