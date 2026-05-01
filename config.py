@@ -6,7 +6,7 @@ load_dotenv()
 ACTOR_IDS = {
     "instagram": "apify/instagram-post-scraper",
     "tiktok": "clockworks/free-tiktok-scraper",
-    "x": "apidojo/twitter-profile-scraper",
+    "x": "apidojo/twitter-scraper-lite",
     "facebook": "apify/facebook-posts-scraper",
     "youtube": "streamers/youtube-scraper",
     "linkedin": "anchor/linkedin-company-scraper",
