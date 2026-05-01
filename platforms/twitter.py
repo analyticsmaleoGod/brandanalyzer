@@ -13,8 +13,8 @@ class TwitterScraper(BaseScraper):
         clean = username.lstrip("@").strip()
         return {
             "startUrls": [f"https://x.com/{clean}"],
-            "maxItems":  max(50, self.smart_limit(date_from, date_to)),
-            "sort":      "Latest",
+            "maxItems": max(50, self.smart_limit(date_from, date_to)),
+            "sort": "Latest",
         }
 
     def parse_results(self, raw_items, date_from, date_to):
@@ -58,4 +58,8 @@ class TwitterScraper(BaseScraper):
                 "shares":          retweets,
                 "saves":           bookmarks,
                 "views":           views,
-                "engagement_rate": self.calc_engagement_rate(likes, comments, retweets, views=views
+                "engagement_rate": self.calc_engagement_rate(likes, comments, retweets, views=views),
+                "url":             url,
+                "thumbnail":       thumbnail,
+            })
+        return posts
