@@ -151,7 +151,12 @@ with T_CP:
         ai = st.session_state.get("cp_ai", "")
         st.markdown("---")
         # Always show errors — even when posts list is empty
-        for e in st.session_state.get("cp_e", []): st.warning(f"⚠️ {e}")
+        for e in st.session_state.get("cp_e", []):
+            msg = str(e).lower()
+            if any(x in msg for x in ["quota", "credit", "limit exceeded", "insufficient", "payment", "billing"]):
+                st.error(f"⛔ Apify quota/credit habis: {e}")
+            else:
+                st.warning(f"⚠️ {e}")
         if not posts:
             st.warning("⚠️ No posts found in this date range. Try widening the date range or check the username.")
         else:
